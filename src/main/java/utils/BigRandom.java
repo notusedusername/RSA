@@ -14,14 +14,14 @@ public class BigRandom {
 
     }
 
-    public int getBigRandom() {
-        return (int) Math.abs(bigRandom);
+    public Double getBigRandom() {
+        return Math.abs(bigRandom);
     }
 
     private void enlargeRandomNumber(double bigRandom) {
         double multipler = Math.pow(10, random.nextInt(10 - 5) + 5);
-        this.bigRandom = bigRandom / createRandomLessThan(10) * multipler;
-        this.bigRandom += createRandomLessThan(1000);
+        this.bigRandom = bigRandom / createRandomLessThan(10.0) * multipler;
+        this.bigRandom += createRandomLessThan(1000.0);
     }
 
     private byte createSecureRandomNumber() {
@@ -31,8 +31,8 @@ public class BigRandom {
         return number[0];
     }
 
-    private int createRandomLessThan(int max) {
-        return random.nextInt(max);
+    private Integer createRandomLessThan(Double max) {
+        return random.nextInt(max.intValue());
     }
 
 }
