@@ -14,5 +14,8 @@
             <email>xnorbikax@gmail.com</email>
         </developer>
     </developers>
+    <scm>
+        <url>https://github.com/notusedusername/RSA/tree/master</url>
+    </scm>
 
 </project>
