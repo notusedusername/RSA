@@ -8,24 +8,30 @@ import java.util.Random;
 
 public class BigRandom {
     private static Logger logger = LoggerFactory.getLogger(BigRandom.class);
-    private double bigRandom;
+    private long bigRandom;
     private Random random;
 
     public BigRandom() {
         random = new Random();
-        bigRandom = createSecureRandomNumber();
-        enlargeRandomNumber(bigRandom);
-
+        do {
+            bigRandom = Math.abs(createSecureRandomNumber());
+            enlargeRandomNumber();
+        }
+        while (bigRandom > Config.getBigrandomUpperEdge());
     }
 
-    public Double getBigRandom() {
-        return Math.abs(bigRandom);
+    public long getBigRandom(long bound) {
+        return bigRandom - bound;
     }
 
-    private void enlargeRandomNumber(double bigRandom) {
-        double multipler = Math.pow(10, random.nextInt(10 - 5) + 5);
-        this.bigRandom = bigRandom / createRandomLessThan(10.0) * multipler;
-        this.bigRandom += createRandomLessThan(1000.0);
+    public long getBigRandom() {
+        return bigRandom;
+    }
+
+    private void enlargeRandomNumber() {
+        double multipler = Math.pow(10, random.nextInt(100 - 5) + 5);
+        this.bigRandom = (long) (bigRandom / createRandomLessThan(10000) * multipler);
+        this.bigRandom += createRandomLessThan(10000);
     }
 
     private byte createSecureRandomNumber() {
@@ -35,8 +41,12 @@ public class BigRandom {
         return number[0];
     }
 
-    private Integer createRandomLessThan(Double max) {
-        return random.nextInt(max.intValue());
+    private Integer createRandomLessThan(int max) {
+        Integer createdRandom = random.nextInt(max);
+        if (createdRandom == 0) {
+            createdRandom = createRandomLessThan(max);
+        }
+        return createdRandom;
     }
 
 }

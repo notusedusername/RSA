@@ -4,28 +4,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.ChineseModulo;
 
+import java.util.Scanner;
+
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(ChineseModulo.class);
 
-    public static void main(String[] args) {
-        Double decryptedMessage = 2.;
+    private static int message;
+
+    private static void getMessageFromUser() {
+        System.out.println("\tRSA encryptor/decryptor 1.0alpha" +
+                "\n\t---------------------------------" +
+                "\nÍrd be az üzenetet egy egész szám formájában:");
+        Scanner scanner = new Scanner(System.in);
+        Main.message = scanner.nextInt();
+    }
+
+    public static void testRSA(int NrOfTests) {
+        long decryptedMessage;
         int iteration = 0;
-        while (decryptedMessage == 2.) {
+        do {
             RSA rsa = new RSA();
-            Double message = 2.0;
+            logger.info(rsa.toString());
             logger.info("Encryption started");
-            Double encryptedMessage = rsa.encrypt(message);
+            long encryptedMessage = rsa.encrypt(message);
             logger.info("Encryption done");
             logger.info("Decryption started");
             decryptedMessage = rsa.decrypt(encryptedMessage);
             logger.info("Decryption done");
-            logger.info("Eredeti üzenet: " + message
+            System.out.println("Eredeti üzenet: " + message
                     + "\nTitkosított üzenet: " + encryptedMessage
-                    + "\nVisszafejtett üzenet: " + decryptedMessage
-                    + "\n " + rsa.toString());
+                    + "\nVisszafejtett üzenet: " + decryptedMessage);
             iteration++;
             logger.warn("{}", iteration);
         }
-        logger.error("The 2 message is not the same!");
+        while (decryptedMessage == message && iteration < NrOfTests);
+
+        if (decryptedMessage != message) {
+            logger.error("The 2 message is not the same!");
+        } else {
+            logger.info("All tests was succesful.");
+        }
+    }
+
+    public static void main(String[] args) {
+        getMessageFromUser();
+        testRSA(1);
+
     }
 }

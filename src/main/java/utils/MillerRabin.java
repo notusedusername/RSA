@@ -7,11 +7,11 @@ import java.util.Random;
 
 public class MillerRabin {
     private static Logger logger = LoggerFactory.getLogger(MillerRabin.class);
-    private Double testSubject;
+    private Long testSubject;
     private int factorizedTwoPow;
-    private Double remainder;
+    private long remainder;
 
-    public boolean isPrime(Double testSubject) {
+    public boolean isPrime(long testSubject) {
         if (testSubject <= 1 || testSubject % 2 == 0) {
             return testSubject == 2;
         }
@@ -21,36 +21,33 @@ public class MillerRabin {
     }
 
     private boolean testTheNumber() {
-        Random random = new Random();
-        boolean foundAGoodRandom;
-        for (int i = 0; i < 10; i++) {
-            Integer randomTester = random.nextInt(testSubject.intValue() - 1) + 1;
-            int randomTwoPow;
-            if (factorizedTwoPow != 0) {
-                randomTwoPow = new Random().nextInt(factorizedTwoPow);
-            } else {
-                randomTwoPow = 0;
+        for (int i = 0; i < 100; i++) {
+            long randomTester = createNewRandomTester();
+            if (!(FastPow.pow(randomTester, remainder, testSubject) == 1
+                    || searchForTrueSecondCondition(randomTester))) {
+                return false;
             }
-            foundAGoodRandom = isThisAGoodRandom(randomTester, randomTwoPow);
-
-            if (!(Math.pow(randomTester, remainder) % testSubject == 1)) {
-                if (foundAGoodRandom) {
-                    return true;
-                } else {
-                    return searchForTrueSecondCondition(randomTester);
-                }
-            }
-
         }
         return true;
     }
 
-    private boolean isThisAGoodRandom(Integer randomTester, Integer randomTwoPow) {
-        return Math.pow(randomTester, Math.pow(2, randomTwoPow) * remainder) % testSubject == (testSubject - 1);
+    private long createNewRandomTester() {
+        Random random = new Random();
+        long createdRandom;
+        do {
+            createdRandom = Math.abs(new BigRandom().getBigRandom(testSubject));
+        } while (createdRandom == 0 || createdRandom >= testSubject.intValue());
+        logger.trace("Apu nézd: {} < {}", createdRandom, testSubject.intValue());
+        return createdRandom;
     }
 
-    private boolean searchForTrueSecondCondition(Integer randomTester) {
-        for (int i = 0; i < factorizedTwoPow; i++) {
+    private boolean isThisAGoodRandom(long randomTester, long r) {
+        logger.trace("{}^{}^{} * {} % {} == {}", randomTester, 2, r, remainder, testSubject, testSubject - 1);
+        return FastPow.pow(randomTester, (long) Math.pow(2, r) * remainder, testSubject) == testSubject - 1;
+    }
+
+    private boolean searchForTrueSecondCondition(long randomTester) {
+        for (int i = 0; i <= factorizedTwoPow; i++) {
             if (isThisAGoodRandom(randomTester, i)) {
                 return true;
             }
@@ -59,7 +56,7 @@ public class MillerRabin {
     }
 
 
-    private void powOfTwo(Double number) {
+    private void powOfTwo(long number) {
         int TwoCounter = 0;
         while (number % 2 == 0) {
             TwoCounter++;
@@ -67,5 +64,6 @@ public class MillerRabin {
         }
         factorizedTwoPow = TwoCounter;
         remainder = number;
+        logger.trace("Kettő hatványok a {} számban: {}, t= {}", testSubject, factorizedTwoPow, number);
     }
 }

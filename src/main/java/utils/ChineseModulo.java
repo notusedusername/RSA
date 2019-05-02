@@ -1,35 +1,36 @@
 package utils;
 
+import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ChineseModulo {
 
     private static Logger logger = LoggerFactory.getLogger(ChineseModulo.class);
-    private Double modClass;
-    private Double[] modulos;
-    private Double[] remainders;
-    private Double[] y;
-    private Double[] iteratedM;
-    private Double M = 1.0;
-    private Double X = 0.0;
+    private long modClass;
+    private long[] modulos;
+    private long[] remainders;
+    private long[] y;
+    private long[] iteratedM;
+    private long M = 1;
+    private long X = 0;
 
-    public ChineseModulo(Double[] remainders, Double[] modulos) {
+    public ChineseModulo(long[] remainders, long[] modulos) {
         this.remainders = remainders;
         this.modulos = modulos;
-        this.y = new Double[modulos.length];
+        this.y = new long[modulos.length];
         iteratedM = initializeiteratedM(modulos.length);
         calculateModClass();
     }
 
-    public Double getModClass() {
+    public long getModClass() {
         return modClass;
     }
 
-    private Double[] initializeiteratedM(int arraySize) {
-        Double[] toReturn = new Double[arraySize];
+    private long[] initializeiteratedM(int arraySize) {
+        long[] toReturn = new long[arraySize];
         for (int i = 0; i < arraySize; i++) {
-            toReturn[i] = 1.0;
+            toReturn[i] = 1;
         }
         return toReturn;
     }
@@ -38,23 +39,32 @@ public class ChineseModulo {
         logger.info("");
         for (int i = 0; i < modulos.length; i++) {
             M = M * modulos[i];
-            for (Double modulo : modulos) {
+            for (long modulo : modulos) {
                 iteratedM[i] *= modulo;
             }
             iteratedM[i] = iteratedM[i] / modulos[i];
-            y[i] = modulo(iteratedM[i], modulos[i]);
+            y[i] = modulo(iteratedM[i], remainders[i], modulos[i]);
             X += y[i] * remainders[i] * iteratedM[i];
         }
         modClass = X % M;
     }
 
-    public static Double modulo(Double leftSide, Double modulo) {
-        Double rightSide = 1.0;
+    public static long modulo(long leftSide, long rightSide, long modulo) {
         logger.info("Calculate linear congruence {} 1 (mod {})", leftSide, modulo);
-        while (rightSide % leftSide != 0) {
-            rightSide += modulo;
+        if (rightSide % new GCD(leftSide, modulo).calculateGCD() == 0) {
+            while (rightSide % leftSide != 0) {
+                rightSide += modulo;
+                logger.trace("{}= {} (mod {})", leftSide, rightSide, modulo);
+            }
+            return rightSide / leftSide;
+
+        } else {
+            logger.error("The congruence cannot be solved!");
+            System.out.println("Please restart the algorithm!");
+            Main.testRSA(Config.getNrOfTests());
+            System.exit(0);
         }
-        return rightSide / leftSide;
+        return 0;
     }
 
 }
