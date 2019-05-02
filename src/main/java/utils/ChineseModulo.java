@@ -1,7 +1,11 @@
 package utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ChineseModulo {
 
+    private static Logger logger = LoggerFactory.getLogger(ChineseModulo.class);
     private Double modClass;
     private Double[] modulos;
     private Double[] remainders;
@@ -31,6 +35,7 @@ public class ChineseModulo {
     }
 
     private void calculateModClass() {
+        logger.info("");
         for (int i = 0; i < modulos.length; i++) {
             M = M * modulos[i];
             for (Double modulo : modulos) {
@@ -45,6 +50,7 @@ public class ChineseModulo {
 
     public static Double modulo(Double leftSide, Double modulo) {
         Double rightSide = 1.0;
+        logger.info("Calculate linear congruence {} 1 (mod {})", leftSide, modulo);
         while (rightSide % leftSide != 0) {
             rightSide += modulo;
         }

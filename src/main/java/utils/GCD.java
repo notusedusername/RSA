@@ -1,7 +1,10 @@
 package utils;
 
-public class GCD {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class GCD {
+    private static Logger logger = LoggerFactory.getLogger(GCD.class);
     private Integer counter;
     private Integer divisor;
     private Integer result;
@@ -23,6 +26,7 @@ public class GCD {
     }
 
     private Integer calculate() {
+        logger.info("");
         while (true) {
             result = counter / divisor;
             Integer newCounter = divisor;

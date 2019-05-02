@@ -1,9 +1,13 @@
 package utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.SecureRandom;
 import java.util.Random;
 
 public class BigRandom {
+    private static Logger logger = LoggerFactory.getLogger(BigRandom.class);
     private double bigRandom;
     private Random random;
 
