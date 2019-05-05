@@ -47,8 +47,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        getMessageFromUser();
-        testRSA(1);
+        while (true) {
+            getMessageFromUser();
+            testRSA(1);
+
+        }
 
     }
 }
